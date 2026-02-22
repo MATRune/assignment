@@ -21,6 +21,7 @@ dependencies = [
     "sqlmodel",
     "typer",
     "uvicorn[standard]",
+    "PyJWT",
 ]
 
 [project.optional-dependencies]
