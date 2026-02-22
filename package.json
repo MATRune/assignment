@@ -1,0 +1,23 @@
+{
+  "name": "info2602a1",
+  "version": "1.3.0",
+  "description": "INFO 2602 Assignment 1 (FastAPI)",
+  "main": "index.js",
+  "scripts": {
+    "test": "newman run collection.json -e environment.json; return 0;"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uwidcit/info2602-fastapi-a1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uwidcit/info2602-fastapi-a1/issues"
+  },
+  "homepage": "https://github.com/uwidcit/info2602-fastapi-a1.git#readme",
+  "dependencies": {
+    "newman": "^6.2.2"
+  }
+}
