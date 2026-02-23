@@ -4,7 +4,6 @@ main_router = APIRouter()
 from .auth import auth_router
 from .pokemon import pokemon_router
 from .mypokemon import router as mypokemon_router
-
 main_router.include_router(auth_router)
 main_router.include_router(pokemon_router)
 main_router.include_router(mypokemon_router)
@@ -13,20 +12,10 @@ from app.database import create_db_and_tables
 
 @main_router.get("/init")
 async def initialize():
-    """Initialize the database, import Pokemon data, and return confirmation.
-
-    The Postman collection uses this endpoint as the first step.  To ensure
-    the tests are idempotent we drop any existing tables before creating them
-    so that repeated calls always produce the same full dataset.  After the
-    schema is ready we load every row from `pokemon.csv` (skipping malformed
-    lines) irrespective of prior contents.
-    """
-    # reset database completely
     from app.database import drop_all
     drop_all()
     create_db_and_tables()
 
-    # import CSV data unconditionally
     from app.database import engine
     from sqlmodel import Session
     from app.models import Pokemon
@@ -54,7 +43,6 @@ async def initialize():
                         )
                         session.add(p)
                     except Exception:
-                        # skip faulty row
                         continue
                 session.commit()
     except FileNotFoundError:
