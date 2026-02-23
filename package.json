@@ -4,7 +4,7 @@
   "description": "INFO 2602 Assignment 1 (FastAPI)",
   "main": "index.js",
   "scripts": {
-    "test": "newman run collection.json -e environment.json; return 0;"
+    "test": "newman run collection.json -e environment.json return 0"
   },
   "repository": {
     "type": "git",
