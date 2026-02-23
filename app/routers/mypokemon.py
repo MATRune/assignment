@@ -1,18 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlmodel import Session, select
-from typing import Annotated
-
 from app.database import SessionDep
 from app.models import UserPokemon, Pokemon
 from app.auth import AuthDep
 
-# utility ----------------------------------------------------------------
 from sqlmodel import select
 import csv, os
 
 def _load_pokemon_csv(db_session: Session) -> None:
-    """Populate the Pokemon table from pokemon.csv if it's empty."""
-    # check count
     if db_session.exec(select(Pokemon)).first():
         return
     csv_path = os.path.join(os.getcwd(), "pokemon.csv")
@@ -48,7 +43,6 @@ async def list_my_pokemons(
     db: SessionDep,
     user: AuthDep,
 ):
-    """Return all UserPokemon objects belonging to the authenticated user."""
     records = db.exec(select(UserPokemon).where(UserPokemon.user_id == user.id)).all()
     result = []
     for up in records:
@@ -66,21 +60,14 @@ async def capture_pokemon(
     db: SessionDep,
     user: AuthDep,
 ):
-    # make sure pokemon table has data (allows clients to skip explicit /init)
     _load_pokemon_csv(db)
-    # validate payload contains pokemon_id and name
     pokemon_id = payload.get("pokemon_id")
     name = payload.get("name")
     if pokemon_id is None or name is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="pokemon_id and name required")
-    # check pokemon exists (id corresponds to CSV pokedex_number, not PK from table)
-    # our import doesn't set primary key to pokedex_number; pokedex numbers start at 1 but
-    # actual `Pokemon.id` is auto-generated incrementally in import order. The tests use
-    # random 1-100 which matches the PK because the CSV was inserted in order.
     pokemon = db.get(Pokemon, pokemon_id)
     if not pokemon:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{pokemon_id} is not a valid pokemon id")
-    # create record
     up = UserPokemon(pokemon_id=pokemon_id, name=name, user_id=user.id)
     db.add(up)
     db.commit()
@@ -99,7 +86,6 @@ async def get_my_pokemon(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Id {id} is invalid or does not belong to {user.username}",
         )
-    # return the species name; if the relationship isn't loaded fetch explicitly
     species = None
     if up.pokemon:
         species = up.pokemon.name
