@@ -3,8 +3,6 @@ from sqlmodel import Session, select
 from app.database import SessionDep
 from app.models import UserPokemon, Pokemon
 from app.auth import AuthDep
-
-from sqlmodel import select
 import csv, os
 
 def _load_pokemon_csv(db_session: Session) -> None:
