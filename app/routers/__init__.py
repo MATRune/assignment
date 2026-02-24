@@ -1,11 +1,12 @@
-from fastapi import APIRouter
+import csv
+from pathlib import Path
+from fastapi import APIRouter, Path
 main_router = APIRouter()
-
 from .auth import auth_router
-from .pokemon import pokemon_router
-from .mypokemon import router as mypokemon_router
 main_router.include_router(auth_router)
+from .pokemon import pokemon_router
 main_router.include_router(pokemon_router)
+from .mypokemon import router as mypokemon_router
 main_router.include_router(mypokemon_router)
 
 from app.database import create_db_and_tables
@@ -21,7 +22,7 @@ async def initialize():
     from app.models import Pokemon
     import csv, os
 
-    csv_path = os.path.join(os.getcwd(), "pokemon.csv")
+    csv_path = Path.cwd() / "pokemon.csv"
     try:
         with open(csv_path, "r", encoding="utf-8") as fh:
             reader = csv.DictReader(fh)
