@@ -1,6 +1,6 @@
 import csv
 from pathlib import Path
-from fastapi import APIRouter, Path
+from fastapi import APIRouter
 main_router = APIRouter()
 from .auth import auth_router
 main_router.include_router(auth_router)
@@ -20,7 +20,7 @@ async def initialize():
     from app.database import engine
     from sqlmodel import Session
     from app.models import Pokemon
-    import csv, os
+    import csv
 
     csv_path = Path.cwd() / "pokemon.csv"
     try:
